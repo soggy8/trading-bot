@@ -7,6 +7,8 @@ Type=simple
 WorkingDirectory=/mnt/vault/trading-bot
 Environment=PYTHONPATH=/mnt/vault/trading-bot/.deps
 Environment=PYTHONUNBUFFERED=1
+# hermes send: keep Hermes' tool store off the NTFS vault (no exec bit there)
+Environment=HERMES_RUNTIME_DIR=/home/andrej/.hermes-runtime
 # never run (and fill the SD card) if the SSD is not mounted
 ExecStartPre=/usr/bin/mountpoint -q /mnt/vault
 ExecStart=/usr/bin/python3 /mnt/vault/trading-bot/snipectl.py job
