@@ -1,0 +1,18 @@
+[Unit]
+Description=trading-bot: pump.fun history download, then backtest + Telegram report
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/mnt/vault/trading-bot
+Environment=PYTHONPATH=/mnt/vault/trading-bot/.deps
+Environment=PYTHONUNBUFFERED=1
+# never run (and fill the SD card) if the SSD is not mounted
+ExecStartPre=/usr/bin/mountpoint -q /mnt/vault
+ExecStart=/usr/bin/python3 /mnt/vault/trading-bot/snipectl.py job
+Restart=on-failure
+RestartSec=60
+Nice=10
+
+[Install]
+WantedBy=default.target
