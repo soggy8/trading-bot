@@ -1,0 +1,21 @@
+[Unit]
+Description=trading-bot: candles of pump.fun coins that graduated to PumpSwap, for slower strategies
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/mnt/vault/trading-bot
+Environment=PYTHONPATH=/mnt/vault/trading-bot/.deps
+Environment=PYTHONUNBUFFERED=1
+# never run (and fill the SD card) if the SSD is not mounted
+ExecStartPre=/usr/bin/mountpoint -q /mnt/vault
+# fixed end time so restarts resume instead of starting a new week: 2026-10-29 12:00 Skopje
+ExecStart=/usr/bin/python3 /mnt/vault/trading-bot/fetch_graduated.py --until 1793271600
+StandardOutput=append:/mnt/vault/trading-bot/data/graduated.log
+StandardError=append:/mnt/vault/trading-bot/data/graduated.log
+Restart=on-failure
+RestartSec=60
+Nice=10
+
+[Install]
+WantedBy=default.target
