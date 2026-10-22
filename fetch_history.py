@@ -13,7 +13,7 @@ import requests
 LIST = "https://frontend-api-v3.pump.fun/coins?offset={}&limit=50&sort=created_timestamp&order=DESC&includeNsfw=true"
 TRADES = "https://swap-api.pump.fun/v2/coins/{}/trades?limit=100&cursor={}"
 H = {"User-Agent": "Mozilla/5.0 yolo-paper-backtest (read-only)"}
-WINDOW_S = 750; MAX_PAGES = 200; MIN_GAP = 0.08   # seconds between requests (all threads)
+WINDOW_S = 750; MAX_PAGES = 200; MIN_GAP = 4.0   # seconds between requests (all threads): swap-api allows ~1 / 4 s per IP, bursts get a long 429 penalty
 MINT_RE = re.compile(r"^[1-9A-HJ-NP-Za-km-z]{32,48}$")
 
 args = sys.argv[1:]

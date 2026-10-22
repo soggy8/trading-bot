@@ -30,7 +30,7 @@ class Pacer:
             w = s.last + s.gap - time.time()
             if w > 0: time.sleep(w)
             s.last = time.time()
-PACE = {"frontend-api-v3.pump.fun": Pacer(1.0), "swap-api.pump.fun": Pacer(0.15)}
+PACE = {"frontend-api-v3.pump.fun": Pacer(1.0), "swap-api.pump.fun": Pacer(4.0)}   # swap-api allows ~1 request / 4 s per IP; bursts get a long 429 penalty
 def get(url):
     p = PACE[url.split("/")[2]]
     for attempt in range(12):
@@ -46,7 +46,8 @@ def get(url):
 KEEP = ("mint", "name", "symbol", "creator", "created_timestamp", "quote_mint", "pump_swap_pool", "total_supply", "program")
 def save(c):
     m1 = get(CANDLES.format(c["mint"], "1m", c["created_timestamp"]))
-    m5 = get(CANDLES.format(c["mint"], "5m", c["created_timestamp"]))
+    # 5m candles only matter when the last 1000 1m candles don't reach back to launch
+    m5 = get(CANDLES.format(c["mint"], "5m", c["created_timestamp"])) if m1 is not None and len(m1) >= 1000 else []
     if m1 is None or m5 is None: return False
     with open(os.path.join(CDIR, c["mint"] + ".json"), "w") as f: json.dump({"1m": m1, "5m": m5}, f)
     # market cap / ATH at fetch time are future information for any strategy: kept only for sanity checks
